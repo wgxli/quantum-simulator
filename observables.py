@@ -66,7 +66,7 @@ class EnergyObservable(MatrixObservable):
         in the space discretization. Elements should be uniformly
         spaced (e.g. output of np.linspace).
     """
-    def __init__(self, space, potential, h_bar=1, mass=1):
+    def __init__(self, space, potential, basis_size=256, h_bar=1, mass=1):
         momentum_operator = MomentumObservable(space, h_bar=h_bar)
         energy_matrix = (momentum_operator**2).matrix / (2 * mass) + np.diag(potential)
-        super().__init__(energy_matrix, basis_size=128, name='energy', unit='J')
+        super().__init__(energy_matrix, basis_size=basis_size, name='energy', unit='J')

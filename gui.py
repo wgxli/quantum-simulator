@@ -241,7 +241,7 @@ class ObservableWidget(QWidget):
         # Randomly select eigenfunction to collapse to
         index = np.random.choice(len(probabilities), p=probabilities)
         current_state.vector *= 0
-        current_state.vector[index] = norm
+        current_state.vector[index] = 1
         
         # Update measurement result
         measurement_result = self.observable.eigenvalues[index]
@@ -249,7 +249,9 @@ class ObservableWidget(QWidget):
             measurement_result, self.observable.unit))
 
         # Modify original state
-        self.state.vector[:] = current_state.to_basis(original_basis).vector
+        converted_state = current_state.to_basis(original_basis).vector
+        converted_state /= np.linalg.norm(converted_state)
+        self.state.vector[:] = norm * converted_state
 
     def change_basis(self):
         self.plot.update_basis(self.observable)
