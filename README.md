@@ -1,6 +1,8 @@
 # quantum-simulator
 1-Dimensional Toy Simulation of the Schrodinger Equation.
 
+![Screenshot of main window.](https://raw.githubusercontent.com/wgxli/quantum-simulator/master/screenshot.png)
+
 ## Usage
 Simply run `main.py`.
 
