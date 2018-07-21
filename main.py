@@ -37,13 +37,12 @@ h_bar = 0.1
 space = np.linspace(*bounds, discretization_size)
 
 potential = 0.1 * space**2 # Harmonic oscillator potential
-potential[space < -9.5] = 1e5
-potential[space > 9.5] = 1e5
-potential[(space > -0.1) & (space < 0.1)] = 3
-#potential = 1e-8 * space
+potential[space < 0] = -2 # Create well on left side
+potential[(space < -9.5) | (space > 9.5)] = 1e5 # Create walls
+potential[(space > -0.1) & (space < 0.1)] = 2 # Create central barrier
 
 #r = (space-bounds[0]) / 8 + 0.3
-#potential = 1 * (r**-12 - 2 * r**-6)
+#potential = 1 * (r**-12 - 2 * r**-6) # Atomic potential
 
 psi = norm.pdf(space, loc=3, scale=0.1).astype(complex) # Gaussian wavepacket
 
