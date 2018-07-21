@@ -59,15 +59,22 @@ class EigenfunctionObservable(Observable):
         as row vectors, discretized and expressed in the default basis.
         Order should correspond to that of eigenvalues.
     """
-    def __init__(self, eigenvalues, eigenfunctions, *args, **kwargs):
+    def __init__(self, eigenvalues, eigenfunctions, basis_size=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # Eigenvalues assumed to be real, as matrix is unitary
         self.eigenvalues = eigenvalues.real
         self.eigenfunctions = eigenfunctions
 
+        # Restrict to smallest (in absolute value) eigenvalues/eigenfunctions when applicable
+        if basis_size is not None:
+            kept_indices = np.argsort(np.abs(eigenvalues.real))[:basis_size]
+            self.eigenvalues = self.eigenvalues[kept_indices]
+            self.eigenfunctions = self.eigenfunctions[kept_indices]
+
+
         # Normalize eigenfunctions
-        self.eigenfunctions /= np.linalg.norm(self.eigenfunctions, axis=1)
+        self.eigenfunctions /= np.linalg.norm(self.eigenfunctions, axis=1)[:, np.newaxis]
         
         # Construct projection and de-projection matrices between default and eigenfunction basis
         self.deprojector = self.eigenfunctions.T
@@ -119,7 +126,7 @@ class MatrixObservable(EigenfunctionObservable):
     def __init__(self, matrix, name='', *args, **kwargs):
         # Compute eigenvalues and eigenfunctions of unitary operator
         print('Computing eigenfunctions for {} observable...'.format(name.lower()))
-        eigenvalues, eigenfunctions = np.linalg.eig(matrix)
+        eigenvalues, eigenfunctions = np.linalg.eigh(matrix)
 
         # Eigenfunctions are assumed to be row vectors
         super().__init__(eigenvalues, eigenfunctions.T, name=name, *args, **kwargs)

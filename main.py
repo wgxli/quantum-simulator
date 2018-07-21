@@ -27,7 +27,7 @@ potential_scale = LogarithmicSlider(
 
 # Simulation options
 bounds = (-10, 10)
-discretization_size = 512
+discretization_size = 1024
 
 # Physical parameters
 mass = 1
