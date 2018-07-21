@@ -6,6 +6,10 @@
 ## Usage
 Simply run `main.py`.
 
+* The real and imaginary parts of the wave function are plotted in green and blue, respectively.
+* The magnitude of the wavefunction is plotted in white.
+* The potential is only visible in the default (position) basis, and is plotted in yellow.
+
 ## Features
 * Stable simulation of unitary evolution.
 * Stable time acceleration.
@@ -22,5 +26,5 @@ Requires the following libraries:
 
 ## Limitations
 * Does not yet support time-varying potentials.
-* Currently supports only one dimensional wavefunctions.
+* Currently supports only one-dimensional wavefunctions.
 * Components with very high energy are discarded to improve numerical stability.
