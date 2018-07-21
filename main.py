@@ -16,13 +16,13 @@ app = QtGui.QApplication([])
 
 # Graphics options
 simulation_speed = LogarithmicSlider(
-        default=0.1,
+        default=1,
         minimum=1e-4, maximum=1e4,
         label_format='Simulation Speed: {:.3g}')
 frame_rate = 30 # Target frames per second
 potential_scale = LogarithmicSlider(
-        default=8e-4,
-        minimum=1e-6, maximum=1,
+        default=1e-1,
+        minimum=1e-5, maximum=1e1,
         label_format='Potential Scale: {:.2g}') # Scale with which to plot potential
 
 # Simulation options
@@ -31,18 +31,21 @@ discretization_size = 512
 
 # Physical parameters
 mass = 1
-h_bar = 1
+h_bar = 0.1
 
 # Define space and initial conditions
 space = np.linspace(*bounds, discretization_size)
 
-potential = 10 * space**2 # Harmonic oscillator potential
+potential = 0.1 * space**2 # Harmonic oscillator potential
 potential[space < -9.5] = 1e5
 potential[space > 9.5] = 1e5
-potential[(space > -0.1) & (space < 0.1)] = 300
+potential[(space > -0.1) & (space < 0.1)] = 3
 #potential = 1e-8 * space
 
-psi = norm.pdf(space, loc=3, scale=0.2) * np.exp(-3j *space) # Gaussian wavepacket
+#r = (space-bounds[0]) / 8 + 0.3
+#potential = 1 * (r**-12 - 2 * r**-6)
+
+psi = norm.pdf(space, loc=3, scale=0.1).astype(complex) # Gaussian wavepacket
 
 # Define observables
 position = PositionObservable(space)
