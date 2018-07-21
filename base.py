@@ -66,9 +66,9 @@ class EigenfunctionObservable(Observable):
         self.eigenvalues = eigenvalues.real
         self.eigenfunctions = eigenfunctions
 
-        # Restrict to smallest (in absolute value) eigenvalues/eigenfunctions when applicable
+        # Restrict to smallest eigenvalues/eigenfunctions when applicable
         if basis_size is not None:
-            kept_indices = np.argsort(np.abs(eigenvalues.real))[:basis_size]
+            kept_indices = np.argsort(self.eigenvalues)[:basis_size]
             self.eigenvalues = self.eigenvalues[kept_indices]
             self.eigenfunctions = self.eigenfunctions[kept_indices]
 
