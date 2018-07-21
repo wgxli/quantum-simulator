@@ -40,7 +40,7 @@ potential = 10 * space**2 # Harmonic oscillator potential
 potential[space < -9.5] = 1e5
 potential[space > 9.5] = 1e5
 potential[(space > -0.1) & (space < 0.1)] = 300
-potential = 1e-8 * space
+#potential = 1e-8 * space
 
 psi = norm.pdf(space, loc=3, scale=0.2) * np.exp(-3j *space) # Gaussian wavepacket
 
