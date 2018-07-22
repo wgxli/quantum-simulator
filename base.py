@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class Observable:
     """
     A generic quantum mechanical observable.
@@ -10,10 +11,10 @@ class Observable:
 
         self.eigenvalues = None
         self.eigenfunctions = None
-        
+
         self.projector = None
         self.deprojector = None
-        
+
         self.matrix = None
 
     def operate(self, vector):
@@ -32,13 +33,17 @@ class Observable:
         try:
             return MatrixObservable(self.matrix @ other.matrix)
         except AttributeError:
-            return EigenfunctionObservable(self.eigenvalues * other, self.eigenfunctions)
+            return EigenfunctionObservable(
+                self.eigenvalues * other,
+                self.eigenfunctions)
 
     def __truediv__(self, other):
         return self * (1/other)
 
     def __pow__(self, power):
-        return EigenfunctionObservable(self.eigenvalues**power, self.eigenfunctions)
+        return EigenfunctionObservable(
+            self.eigenvalues**power,
+            self.eigenfunctions)
 
     def __str__(self):
         return '{} observable'.format(self.name.title())
@@ -59,7 +64,10 @@ class EigenfunctionObservable(Observable):
         as row vectors, discretized and expressed in the default basis.
         Order should correspond to that of eigenvalues.
     """
-    def __init__(self, eigenvalues, eigenfunctions, basis_size=None, *args, **kwargs):
+    def __init__(
+            self,
+            eigenvalues, eigenfunctions, *args,
+            basis_size=None, **kwargs):
         super().__init__(*args, **kwargs)
 
         # Eigenvalues assumed to be real, as matrix is unitary
@@ -72,15 +80,16 @@ class EigenfunctionObservable(Observable):
             self.eigenvalues = self.eigenvalues[kept_indices]
             self.eigenfunctions = self.eigenfunctions[kept_indices]
 
-
         # Normalize eigenfunctions
-        self.eigenfunctions /= np.linalg.norm(self.eigenfunctions, axis=1)[:, np.newaxis]
-        
-        # Construct projection and de-projection matrices between default and eigenfunction basis
+        eigenfunction_norms = np.linalg.norm(self.eigenfunctions, axis=1)
+        self.eigenfunctions /= eigenfunction_norms[:, np.newaxis]
+
+        # Construct conversion matrices between default and eigenfunction basis
+        # Operator is unitary, so inverse is equal to conjugate transpose
         self.deprojector = self.eigenfunctions.T
-        self.projector = self.eigenfunctions.conj() # Operator is unitary, so inverse is equal to conjugate transpose
-        
-        # Construct operator matrix by projecting, scaling, and de-projecting from default basis
+        self.projector = self.eigenfunctions.conj()
+
+        # Construct operator matrix by projecting, scaling, and de-projecting
         self.matrix = self.deprojector @ np.diag(self.eigenvalues) @ self.projector
 
 
@@ -123,13 +132,19 @@ class MatrixObservable(EigenfunctionObservable):
         A 2-dimensional array representing the operator as a unitary matrix
         acting upon the space, expressed in the default basis.
     """
-    def __init__(self, matrix, name='', *args, **kwargs):
+    def __init__(
+            self,
+            matrix, *args,
+            name='', **kwargs):
         # Compute eigenvalues and eigenfunctions of unitary operator
-        print('Computing eigenfunctions for {} observable...'.format(name.lower()))
+        print('Computing {} eigenfunctions...'.format(name.lower()))
         eigenvalues, eigenfunctions = np.linalg.eigh(matrix)
 
         # Eigenfunctions are assumed to be row vectors
-        super().__init__(eigenvalues, eigenfunctions.T, name=name, *args, **kwargs)
+        super().__init__(
+            eigenvalues, eigenfunctions.T,
+            name=name,
+            *args, **kwargs)
 
 
 class OperatorObservable(MatrixObservable):
@@ -148,50 +163,90 @@ class OperatorObservable(MatrixObservable):
         equal to the value of the element's representative state in the
         default basis (usually, the physical position).
     """
-    def __init__(self, operator, space):
-        pass
-
 
 
 class State:
-    """
-    Represents the state of a quantum mechanical system.
+    """Represents the state of a quantum mechanical system."""
 
-    Parameters
-    ----------
-    vector : array_like
-        The vector describing the state completely. Assumed to be expressed
-        in the basis given by the 'basis' parameter.
-
-    basis : Observable
-        A quantum mechanical observable. The state is represented in the basis
-        of eigenfunctions of the given observable.
-        If None, vector is assumed to be in the position basis.
-    """
     def __init__(self, vector, basis=None):
+        """
+        Parameters
+        ----------
+        vector : array_like
+            The vector describing the state completely. Assumed to be expressed
+            in the basis given by the 'basis' parameter.
+
+        basis : Observable
+            A quantum mechanical observable. The state is represented in
+            the basis of eigenfunctions of the given observable.
+            If None, vector is assumed to be in the position basis.
+        """
         self.vector = vector
         self.basis = basis
 
-    """
-    Returns a copy of the state converted to the given basis.
-    
-    Parameters
-    ----------
-    basis : Observable
-        Observable corresponding to desired basis.
-
-    Returns
-    -------
-    State
-        Copy of state, converted into given basis.
-    """
     def to_basis(self, basis):
+        """
+        Returns a copy of the state converted to the given basis.
+
+        Parameters
+        ----------
+        basis : Observable
+            Observable corresponding to desired basis.
+
+        Returns
+        -------
+        State
+            Copy of state, converted into given basis.
+        """
         if basis == self.basis:
             return State(self.vector, self.basis)
 
-        if basis == None:
+        if basis is None:
             return State(self.basis.deproject(self.vector))
-        elif self.basis == None:
+        elif self.basis is None:
             return State(basis.project(self.vector), basis)
-        else:
-            return self.to_basis(None).to_basis(basis)
+
+        return self.to_basis(None).to_basis(basis)
+
+    def measure(self, observable):
+        """
+        Measure the given observable, collapsing the wavefunction.
+
+        Parameters
+        ----------
+        observable : Observable
+            Observable to measure.
+
+        Returns
+        -------
+        real_number
+            Measured value of the observable.
+            As a side effect, collapses the state into
+            the corresponding eigenfunction of the obervable.
+        """
+        norm = np.linalg.norm(self.vector)
+
+        # Convert state to eigenbasis of given observable
+        converted_state = self.to_basis(observable)
+        amplitudes = converted_state.vector
+
+        # Compute probabilities for each eigenfunction
+        probabilities = np.square(np.abs(amplitudes))
+        probabilities /= np.sum(probabilities)
+
+        # Randomly select eigenfunction to collapse to
+        index = np.random.choice(len(probabilities), p=probabilities)
+
+        # Record result of measurement
+        measurement_result = observable.eigenvalues[index]
+
+        # Compute state after collapse
+        converted_state.vector *= 0
+        converted_state.vector[index] = 1
+        new_vector = converted_state.to_basis(self.basis).vector
+
+        # Normalize vector and modify current state
+        new_vector *= norm / np.linalg.norm(new_vector)
+        self.vector[:] = new_vector
+
+        return measurement_result
