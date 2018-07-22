@@ -28,3 +28,8 @@ Requires the following libraries:
 * Does not yet support time-varying potentials.
 * Currently supports only one-dimensional wavefunctions.
 * Components with very high energy are discarded to improve numerical stability.
+
+## Troubleshooting
+* If the simulation runs slowly, try decreasing the `discretization_size` in `main.py` to 512.
+  If the problem persists, decrease `basis_size` to 256 or 128.
+  Note, however, that this will decrease the simulation accuracy.
