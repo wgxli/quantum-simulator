@@ -27,7 +27,7 @@ simulation_speed : Slider
 potential_scale : Slider
     Slider to control vertical scale at which energy potential is plotted.
 """
-frame_rate = 30  # Target frames per second
+frame_rate = 30
 
 simulation_speed = LogarithmicSlider(
     default=1,
@@ -37,8 +37,7 @@ simulation_speed = LogarithmicSlider(
 potential_scale = LogarithmicSlider(
     default=1e-1,
     minimum=1e-5, maximum=1e1,
-    label_format='Potential Scale: {:.2g}'
-    )  # Scale with which to plot potential
+    label_format='Potential Scale: {:.2g}')
 
 
 # Simulation options
@@ -48,13 +47,17 @@ bounds : tuple of 2 real numbers
 
 discretization_size : integer
     Number of samples used to discretize simulation space.
-    Must be greater than or equal to basis_size.
     Higher numbers increase visual resolution at expense of speed.
+    Must be greater than basis_size.
+    Setting equal to basis_size may cause unwanted artifacts
+    due to momentum wrap-around.
 
 basis_size : integer
     Number of energy components to use.
-    Must be less than or equal to discretization_size.
     Higher numbers increase simulation accuracy at expense of speed.
+    Must be less than discretization_size.
+    Setting equal to discretization_size may cause unwanted artifacts
+    due to momentum wrap-around.
 """
 bounds = (-10, 10)
 discretization_size = 1024

@@ -30,6 +30,6 @@ Requires the following libraries:
 * Components with very high energy are discarded to improve numerical stability.
 
 ## Troubleshooting
-* If the simulation runs slowly, try decreasing the `discretization_size` in `main.py` to 512.
-  If the problem persists, decrease `basis_size` to 256 or 128.
+* If the simulation runs slowly, try decreasing `basis_size` in `main.py` to 256.
+  If the problem persists, decrease `discretization_size` to 512.
   Note, however, that this will decrease the simulation accuracy.
