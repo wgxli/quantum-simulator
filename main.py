@@ -89,12 +89,13 @@ main_window.add_widget(measurement_panel)
 
 # Animation
 def update_animation():
-    evolve(float(simulation_speed) / frame_rate)
+    evolve(simulation_speed.value() / frame_rate)
     plot.update()
 
 
 timer = QtCore.QTimer()
 timer.timeout.connect(update_animation)
+
 if __name__ == '__main__':
     import sys
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):

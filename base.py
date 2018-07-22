@@ -77,8 +77,8 @@ class EigenfunctionObservable(Observable):
         # Restrict to smallest eigenvalues/eigenfunctions when applicable
         if basis_size is not None:
             kept_indices = np.argsort(self.eigenvalues)[:basis_size]
-            self.eigenvalues = self.eigenvalues[kept_indices]
-            self.eigenfunctions = self.eigenfunctions[kept_indices]
+            self.eigenvalues = self.eigenvalues[kept_indices].copy()
+            self.eigenfunctions = self.eigenfunctions[kept_indices].copy()
 
         # Normalize eigenfunctions
         eigenfunction_norms = np.linalg.norm(self.eigenfunctions, axis=1)
@@ -86,7 +86,7 @@ class EigenfunctionObservable(Observable):
 
         # Construct conversion matrices between default and eigenfunction basis
         # Operator is unitary, so inverse is equal to conjugate transpose
-        self.deprojector = self.eigenfunctions.T
+        self.deprojector = self.eigenfunctions.T.copy()
         self.projector = self.eigenfunctions.conj()
 
         # Construct operator matrix by projecting, scaling, and de-projecting

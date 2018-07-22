@@ -59,13 +59,10 @@ class Slider(QWidget):
         return self.slider.value() / self.ticks
 
     def value(self):
-        return float(self)
-
-    def __float__(self):
         return self.minimum + self.fractional_position() * self.range
 
     def update_label(self):
-        self.label.setText(self.label_format.format(float(self)))
+        self.label.setText(self.label_format.format(self.value()))
 
 
 class LogarithmicSlider(Slider):
@@ -86,7 +83,7 @@ class LogarithmicSlider(Slider):
         fractional_position = log_position / self.log_range
         self.slider.setValue(round(fractional_position * self.ticks))
 
-    def __float__(self):
+    def value(self):
         return self.minimum * np.exp(self.fractional_position()*self.log_range)
 
 
@@ -153,7 +150,7 @@ class Plot(pg.GraphicsWindow):
             plot.setData(self.x_data, plot_function(psi[self.order]))
 
         if self.potential_plot is not None:
-            y_data = float(self.potential_scale) * self.potential
+            y_data = self.potential_scale.value() * self.potential
             self.potential_plot.setData(self.x_data, y_data)
         return self.plots
 
