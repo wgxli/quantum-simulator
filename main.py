@@ -119,6 +119,7 @@ energy = EnergyObservable(
         basis_size=basis_size,
         mass=mass)
 
+
 # Initialize simulation state
 simulation_size = bounds[1] - bounds[0]
 target_norm = np.sqrt(discretization_size) / simulation_size

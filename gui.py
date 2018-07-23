@@ -145,13 +145,16 @@ class Plot(pg.GraphicsWindow):
             self.potential_plot = None
 
     def update(self):
-        psi = self.state.to_basis(self.basis).vector
+        self.setVisible(False)
+        psi = self.state.to_basis(self.basis).vector[self.order]
         for plot, plot_function in self.plots:
-            plot.setData(self.x_data, plot_function(psi[self.order]))
+            plot.setData(self.x_data, plot_function(psi))
 
         if self.potential_plot is not None:
             y_data = self.potential_scale.value() * self.potential
             self.potential_plot.setData(self.x_data, y_data)
+
+        self.setVisible(True)
         return self.plots
 
 

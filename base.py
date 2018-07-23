@@ -27,7 +27,16 @@ class Observable:
         return self.deprojector @ vector
 
     def __add__(self, other):
-        return MatrixObservable(self.matrix + other.matrix)
+        try:
+            return MatrixObservable(self.matrix + other.matrix)
+        except AttributeError:
+            return MatrixObservable(self.matrix + other)
+
+    def __sub__(self, other):
+        try:
+            return MatrixObservable(self.matrix - other.matrix)
+        except AttributeError:
+            return MatrixObservable(self.matrix - other)
 
     def __mul__(self, other):
         try:
@@ -36,6 +45,10 @@ class Observable:
             return EigenfunctionObservable(
                 self.eigenvalues * other,
                 self.eigenfunctions)
+
+    def __rmul__(self, other):
+        if not isinstance(other, Observable):
+            return self.__mul__(other)
 
     def __truediv__(self, other):
         return self * (1/other)
