@@ -1,7 +1,13 @@
-# quantum-simulator
+# Quantum Simulator
 1-Dimensional Simulation of the Schrodinger Equation.
 
 ![Screenshot of main window.](https://raw.githubusercontent.com/wgxli/quantum-simulator/master/screenshots/main.png)
+
+## Features
+* Stable simulation of unitary evolution.
+* Stable time acceleration.
+* View evolution of wavefunction in different bases.
+* Measure observables and simulate the collapse of the wavefunction.
 
 ## Usage
 Simply run `main.py`.
@@ -10,15 +16,8 @@ Simply run `main.py`.
 * The magnitude of the wavefunction is plotted in white.
 * The potential is only visible in the default (position) basis, and is plotted in yellow.
 
-## Features
-* Stable simulation of unitary evolution.
-* Stable time acceleration.
-* View evolution of wavefunction in different bases.
-* Measure observables and simulate the collapse of the wavefunction.
-
 ## Requirements
-Currently supports only Python 3.
-Requires the following libraries:
+Requires the following libraries on Python 3:
 * PyQt5
 * Numpy
 * Scipy
